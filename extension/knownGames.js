@@ -58,10 +58,10 @@ const knownGames = {
         viewport: createViewport(
             (width = 15),
             (height = 15),
-            (leftMargin = 510/60),
-            (rightMargin = 510/60),
-            (topMargin = 90/60),
-            (bottomMargin = 90/60),
+            (leftMargin = 510 / 60),
+            (rightMargin = 510 / 60),
+            (topMargin = 90 / 60),
+            (bottomMargin = 90 / 60),
         ),
         isGridGame: true,
     },
@@ -119,7 +119,7 @@ const knownGames = {
 
     // Not detectable
     CodeOfKutulu: {
-        viewport: function(ctx, width, height) {  // width and height are integers corresponding to the size of map in cells
+        viewport: function (ctx, width, height) {  // width and height are integers corresponding to the size of map in cells
             let block = 1026 / height;
             return createViewportFromScreenshot(
                 (fieldLogicalWidth = +width),
@@ -129,6 +129,23 @@ const knownGames = {
                 (fieldTop = 0),
                 (fieldRight = 16000)
             );
+        },
+        isGridGame: true,
+    },
+
+    "winter-challenge-2024": {
+        viewport: function (ctx, width, height) {
+            const h = 1080 - 155 - 15;
+            const s = h / height;
+            const res = createViewportFromScreenshot(
+                (fieldLogicalWidth = width),
+                (fieldLogicalHeight = height),
+                (screenshotWidth = 1920),
+                (fieldLeft = 960 - s * width/2),
+                (fieldTop = 155),
+                (fieldRight = 960 + s * width/2)
+            );
+            return res;
         },
         isGridGame: true,
     },
@@ -166,20 +183,26 @@ function createViewportFromScreenshot(
     fieldTop,
     fieldRight,
 ) {
-    let fieldXFraction = (fieldRight - fieldLeft) / screenshotWidth;
-    let screenLogicalWidth = fieldLogicalWidth / fieldXFraction;
-    let screenLogicalHeight = (screenLogicalWidth * 9) / 16;
-    let scale = screenLogicalWidth / screenshotWidth;
-    let logicalLeft = fieldLeft * scale;
-    let logicalTop = fieldTop * scale;
-    let logicalRight = screenLogicalWidth - logicalLeft;
-    let logicalBottom = screenLogicalHeight - logicalTop;
-    return {
-        left: -logicalLeft,
-        top: -logicalTop,
-        right: logicalRight,
-        bottom: logicalBottom,
-        fieldWidth: fieldLogicalWidth,
-        fieldHeight: fieldLogicalHeight,
-    };
+    try {
+        console.log("vp", fieldLogicalWidth, fieldLogicalHeight, screenshotWidth, fieldLeft, fieldTop, fieldRight);
+        let fieldXFraction = (fieldRight - fieldLeft) / screenshotWidth;
+        let screenLogicalWidth = fieldLogicalWidth / fieldXFraction;
+        let screenLogicalHeight = (screenLogicalWidth * 9) / 16;
+        let scale = screenLogicalWidth / screenshotWidth;
+        let logicalLeft = fieldLeft * scale;
+        let logicalTop = fieldTop * scale;
+        let logicalRight = screenLogicalWidth - logicalLeft;
+        let logicalBottom = screenLogicalHeight - logicalTop;
+        return {
+            left: -logicalLeft,
+            top: -logicalTop,
+            right: logicalRight,
+            bottom: logicalBottom,
+            fieldWidth: fieldLogicalWidth,
+            fieldHeight: fieldLogicalHeight,
+        };
+    } catch (e) {
+        console.log(e);
+        throw e;
+    }
 }
